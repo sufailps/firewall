@@ -45,6 +45,7 @@ def get_zone_list():
 def fw_add_port():
 	port = Prompt.ask("Enter port number : ")
 	proto = Prompt.ask("Enter protocol :", choices=["tcp","udp"],default="tcp")
+	fw_get_active_zones()
 	zone =  Prompt.ask("Enter zone :", choices=get_zone_list(),default=CONF["ZONE"])
 	cmd = "sudo firewall-cmd --add-port="+port+"/"+proto+" --zone="+zone+" --permanent "
 	print(os.popen(cmd).read())
@@ -61,6 +62,7 @@ def zones():
 def fw_add_services():
 	fw_get_services()
 	service = Prompt.ask("Enter service name from above list : ")
+	fw_get_active_zones()
 	zone =  Prompt.ask("Enter zone :", choices=get_zone_list(),default=CONF["ZONE"])
 	cmd = "sudo firewall-cmd --add-service="+service+" --zone="+zone+" --permanent" 
 	print(os.popen(cmd).read())
@@ -69,10 +71,10 @@ def fw_add_source():
 	cmd=f'sudo firewall-cmd - -add-source ={ip}'
 	print(os.popen(cmd).read)
 def fw_dlt_rule_menu():
-	print("\t 1 Remove port")
-	print("\t 2 Remove services")
-	print("\t 3 Remove sources")
-	print("\t 4 Back to main menu ")
+	print("\t [1] Remove port")
+	print("\t [2] Remove services")
+	print("\t [3] Remove sources")
+	print("\t [4] Back to main menu ")
 
 def fw_add_rule_menu():
 	gprint("\t[1]Add Port")
@@ -100,6 +102,7 @@ def fw_add_rule():
 def fw_dlt_port():
 	port = Prompt.ask("Enter port number : ")
 	proto = Prompt.ask("Enter protocol :", choices=["tcp","udp"],default="tcp")
+	fw_get_active_zones()
 	zone =  Prompt.ask("Enter zone :", choices=get_zone_list(),default=CONF["ZONE"])
 	cmd = "sudo firewall-cmd --remove-port="+port+"/"+proto+" --zone="+zone+" --permanent "
 	print(os.popen(cmd).read())    
@@ -107,6 +110,7 @@ def fw_dlt_port():
 def fw_dlt_services():
 	fw_get_services()
 	service = Prompt.ask("Enter service name from above list : ")
+	fw_get_active_zones()
 	zone =  Prompt.ask("Enter zone :", choices=get_zone_list(),default=CONF["ZONE"])
 	cmd = "sudo firewall-cmd --remove-service="+service+" --zone="+zone+" --permanent" 
 	print(os.popen(cmd).read())
@@ -118,7 +122,7 @@ def fw_dlt_sources():
 
 def fw_dlt_rule():
 	fw_dlt_rule_menu()
-	ch=int(input("Enter choice"))
+	ch=input("Enter choice")
 	if ch == "1":
 		fw_dlt_port()
 	elif ch == "2":
@@ -138,17 +142,17 @@ def add_menu():
 	gprint("[5] Reload firewall")
 	gprint("[6] Exit")
 def menu():
-	print("1 Display firewall status")
-	print("2 Set Rules")
-	print("3 Delete Rule")
-	print("4 Reload Rule")
-	print("5 Exit")
+	print("[1] Display firewall status")
+	print("[2] Set Rules")
+	print("[3] Delete Rule")
+	print("[4] Reload Rule")
+	print("[5] Exit")
 
 
 if __name__ == "__main__":
 	while True:
 		menu()
-		ch = Prompt.ask("Enter your option : ", choices=["1", "2", "3","4","5"])
+		ch = Prompt.ask("Enter your choice : ", choices=["1", "2", "3","4","5"])
 		if ch == "1":
 		#get status
 			fw_get_status()
@@ -157,10 +161,10 @@ if __name__ == "__main__":
 		#add rules
 			fw_add_rule()
 		elif ch == "3":
-			fw_dlt_rule_menu()
+			fw_dlt_rule()
 		elif ch == "4":
-			fw_reload
+			fw_reload()
 		elif ch == "5":
 			break;
 		else:
-			console.print(Text("Wrong option! Type option again ",style="bold red"))
+			console.print(Text("Invalid choice",style="bold red"))
